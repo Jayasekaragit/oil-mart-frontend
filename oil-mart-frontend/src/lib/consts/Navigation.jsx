@@ -45,6 +45,12 @@ export const DASHBOARD_SIDEBAR_LINKS = [
 		label: 'Messages',
 		path: '/messages',
 		icon: <HiOutlineAnnotation />
+	},
+	{
+		key: 'suppliers',
+		label: 'Suppliers',
+		path: '/suppliers',
+		icon: <HiOutlineAnnotation />
 	}
 ]
 
