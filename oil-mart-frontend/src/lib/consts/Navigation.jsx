@@ -49,7 +49,13 @@ export const DASHBOARD_SIDEBAR_LINKS = [
 	{
 		key: 'suppliers',
 		label: 'Suppliers',
-		path: '/suppliers',
+		path: '/admin/suppliers',
+		icon: <HiOutlineAnnotation />
+	},
+	{
+		key: 'users',
+		label: 'Manage Users',
+		path: '/manage-users',
 		icon: <HiOutlineAnnotation />
 	}
 ]
