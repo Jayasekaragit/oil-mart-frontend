@@ -55,7 +55,7 @@ export const DASHBOARD_SIDEBAR_LINKS = [
 	{
 		key: 'users',
 		label: 'Manage Users',
-		path: '/manage-users',
+		path: '/admin/users',
 		icon: <HiOutlineAnnotation />
 	}
 ]

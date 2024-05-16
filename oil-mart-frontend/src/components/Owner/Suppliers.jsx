@@ -8,7 +8,7 @@ export default function Suppliers() {
         this is the Supplier page
         <Link to="/" className='underline'> Go to dashboard</Link>
         <div>
-            <AddUserForm/>
+            {/* <AddUserForm/> */}
         </div>
     </div>
     </>
