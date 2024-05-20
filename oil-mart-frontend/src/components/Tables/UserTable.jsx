@@ -115,56 +115,25 @@ import React from 'react';
 import  { useEffect, useState } from 'react';  // Added useState
 import axios from 'axios';
 import './Table.css';
-import UpdateUserModel from '../Forms/UpdateUserModel';
+import UpdateUserModal from '../Forms/UpdateUserModel';
 
-const UserTable = ({result}) => {
+
+const UserTable = ({result,deleteUser,updateUser}) => {
+    const [showModal, setShowModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    const handleUpdateClick = (user) => {
+        setSelectedUser(user);
+        setShowModal(true);
+    };
     
-    const [editingUser, setEditingUser] = useState(null);
-    // useEffect(()=>{
-    //     const fetchAllProducts = async()=>{
-    //         try{
-    //             const res =await axios.get('http://localhost:5000/users');
-    //             // console.log(res.data);
-    //             // console.log(data);
-    //             setResults(res.data);
-    //             // console.log(data[0])
-    //         }
-    //         catch(err){
-    //           console.log(err)
-    //         }
-    //     }
-    //     fetchAllProducts()
-    //   },[]);
-
-      const deleteUser = async (id) => {
-        try {
-          await axios.delete(`http://localhost:5000/admin/users/${id}`);
-          console.log("Post deleted:", id);
-          setResults(result.filter((user) => user.id !== id));
-        } catch (error) {
-          console.error("Error deleting user:", error);
-        }
-      };
-
-      const updateUser = (user) => {
-        setEditingUser(user);
-        };
-
-        const saveUser = async (userData) => {
-            try {
-                const res = await axios.put(`http://localhost:5000/admin/users/${userData.id}`, userData);
-                setResults(result.map((user) => user.id === userData.id ? userData : user));
-                setEditingUser(null);
-            } catch (error) {
-                console.error("Error updating user:", error);
-            }
-        };
-
+      // Function to update user data
+     
     return (
         <>
         {/*  */}
         
-        <UpdateUserModel isOpen={!!editingUser} onClose={() => setEditingUser(null)} user={editingUser} onSave={saveUser} />
+        {/* <UpdateUserModel isOpen={!!editingUser} onClose={() => setEditingUser(null)} user={editingUser} onSave={saveUser} /> */}
                 <div className=" mx-auto my-10 overflow-hidden shadow-md sm:rounded-lg">
                 <table className="  w-full border-collapse border border-slate-500">
                     <thead>
@@ -207,13 +176,20 @@ const UserTable = ({result}) => {
                             </td>
                             <td className='px-3 flex flex-row justify-around'>
                                 <button className="bg-red-300 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => deleteUser(user.id)}>Delete</button>
-                                <button className="bg-green-300 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={() => updateUser(user)}>Update</button>
+                                <button className="bg-green-300 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={() =>  handleUpdateClick(user)}>Update</button>
                             </td>
                         </tr>
                             )
                         })}
                     </tbody>
                 </table>
+                {showModal && (
+                <UpdateUserModal
+                    user={selectedUser}
+                    onUpdate={updateUser}
+                    onClose={() => setShowModal(false)}
+                />
+            )}
                 
             </div>
                            
