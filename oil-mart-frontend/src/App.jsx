@@ -29,11 +29,12 @@ function App() {
       <Route path="/" element={<LoginForm />}></Route>
       <Route>  
         {/* <Route index element={<Dashboard />} /> */}
-        <Route path="products" element={<Products />} />
+       
       </Route>
       
       <Route path="/admin" element={<ProtectedRoute role="Admin"><Layout /></ProtectedRoute>}>
         <Route path="dashboard" index element={<ProtectedRoute role="Admin"><Dashboard /></ProtectedRoute>} />
+        <Route path="products" element={<Products />} />
         <Route path="users" element={<Users />} />
         <Route path="suppliers" element={<Suppliers />} />
         {/* <Route path="suppliers" element={<Suppliers />} /> */}
