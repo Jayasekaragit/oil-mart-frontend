@@ -6,6 +6,10 @@ import AddBrandForm from './Forms/AddBrandForm'
 import AddCategoryForm from './Forms/AddCategoryForm'
 import AddSubCategoryForm from './Forms/AddSubCategoryForm'
 import ProductsTable from './Tables/ProductTable'
+
+// import AddStockForm from './Forms/AddStockForm'
+// import AddStockWithBarcode from './Forms/AddStockForm'
+
 export default function Products() {
   return (
     <>
@@ -20,6 +24,12 @@ export default function Products() {
     <div className='basis-2/4'>
     <BoxWrapper>
       <AddProductForm />
+   
+      {/* <AddStockForm /> */}
+      {/* <AddStockForm /> */}
+      {/* <AddStockWithBarcode /> */}
+      {/* <UpdateExhistingQuantity /> */}
+      {/* <AddQuantityAndUpdateBarcodes /> */}
     </BoxWrapper>
     </div>
    
