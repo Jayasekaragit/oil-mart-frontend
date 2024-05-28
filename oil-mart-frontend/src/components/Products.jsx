@@ -6,6 +6,8 @@ import AddBrandForm from './Forms/AddBrandForm'
 import AddCategoryForm from './Forms/AddCategoryForm'
 import AddSubCategoryForm from './Forms/AddSubCategoryForm'
 import ProductsTable from './Tables/ProductTable'
+import StockForm from './Forms/StockForm'
+// import AddStockBatchForm from './Forms/AddStockBatchForm'
 
 // import AddStockForm from './Forms/AddStockForm'
 // import AddStockWithBarcode from './Forms/AddStockForm'
@@ -24,7 +26,8 @@ export default function Products() {
     <div className='basis-2/4'>
     <BoxWrapper>
       <AddProductForm />
-   
+      <StockForm  />
+      {/* <AddStockBatchForm /> */}
       {/* <AddStockForm /> */}
       {/* <AddStockForm /> */}
       {/* <AddStockWithBarcode /> */}

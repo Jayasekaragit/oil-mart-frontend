@@ -10,7 +10,8 @@ import AddSupplierForm from "../Forms/AddSupplierForm";
 // import UserTable from "../Tables/UserTable";
 import axios from "axios";
 import SupplierTable from "../Tables/SupplierTable";
-import Navbar from "../shared/Navbar";
+// import Navbar from "../shared/Navbar";
+import SupplierForm from "../Forms/SupplierForm";
 
 export default function Suppliers() {
 //   const [formData, setFormData] = useState({
@@ -88,18 +89,9 @@ export default function Suppliers() {
   return (
     <>
       <div className="flex flex-row">
-        <Navbar />
-        {/* <div class="basis-1/4 bg-slate-400">01</div>
-        <div className="basis-3/4">
-          <SupplierTable result={result} deleteUser={deleteUser} updateUser={updateUser}/>
-        </div>
-        <div className="basis-1/4 bg-yellow-200">
-          <AddSupplierForm
-            setFormData={setFormData}
-            handleSubmit={handleSubmit}
-            formData={formData}
-          />
-        </div> */}
+        {/* <Navbar /> */}
+       <SupplierForm />
+       <SupplierTable />
       </div>
     </>
   );

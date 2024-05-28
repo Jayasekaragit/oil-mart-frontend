@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal';
-
-Modal.setAppElement('#root'); // Set the root element for the modal
 
 const AddProductForm = () => {
   const [subCategories, setSubCategories] = useState([]);
@@ -15,17 +12,14 @@ const AddProductForm = () => {
     supplier_id: '',
     warehouse_id: '',
     p_name: '',
-    buy_price: '',
+    sell_price: '',
     initial_stock: '',
     current_stock: '',
     sku: '',
     min_stock_level: '',
     reorder_quantity: '',
+    barcode: '',  // Added barcode field here
   });
-  const [barcodes, setBarcodes] = useState([]);
-  const [barcodeIndex, setBarcodeIndex] = useState(0);
-  const [isBarcodeModalOpen, setIsBarcodeModalOpen] = useState(false);
-  const [currentBarcode, setCurrentBarcode] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,24 +48,12 @@ const AddProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsBarcodeModalOpen(true);
-  };
-
-  const handleBarcodeSubmit = async () => {
-    const newBarcodes = [...barcodes, currentBarcode];
-    setBarcodes(newBarcodes);
-    setCurrentBarcode('');
-    if (newBarcodes.length === parseInt(product.initial_stock, 10)) {
-      setIsBarcodeModalOpen(false);
-      try {
-        const response = await axios.post('http://localhost:5000/api/products', { ...product, barcodes: newBarcodes });
-        console.log(response.data);
-        // Reset form or handle success
-      } catch (error) {
-        console.error('Error adding product:', error);
-      }
-    } else {
-      setBarcodeIndex(barcodeIndex + 1);
+    try {
+      const response = await axios.post('http://localhost:5000/api/products', product);
+      console.log(response.data);
+      // Reset form or handle success
+    } catch (error) {
+      console.error('Error adding product:', error);
     }
   };
 
@@ -80,7 +62,7 @@ const AddProductForm = () => {
       <div className="form-container shadow-lg rounded-lg">
         <h2 className="text-center text-3xl font-extrabold text-black">Add Product</h2>
         <form onSubmit={handleSubmit} className='flex p-3 m-3'>
-          {/* Sub Category */}
+          {/* Left Column */}
           <div className='p-4'>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Sub Category</label>
@@ -99,7 +81,6 @@ const AddProductForm = () => {
                 ))}
               </select>
             </div>
-            {/* Brand */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Brand</label>
               <select
@@ -117,7 +98,6 @@ const AddProductForm = () => {
                 ))}
               </select>
             </div>
-            {/* Supplier */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Supplier</label>
               <select
@@ -135,7 +115,6 @@ const AddProductForm = () => {
                 ))}
               </select>
             </div>
-            {/* Warehouse */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Warehouse</label>
               <select
@@ -153,7 +132,6 @@ const AddProductForm = () => {
                 ))}
               </select>
             </div>
-            {/* Product Name */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Product Name</label>
               <input
@@ -166,14 +144,13 @@ const AddProductForm = () => {
                 required
               />
             </div>
-            {/* Buy Price */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Buy Price</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Sell Price</label>
               <input
-                name="buy_price"
+                name="sell_price"
                 type="number"
                 step="0.01"
-                value={product.buy_price}
+                value={product.sell_price}
                 onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Buy Price"
@@ -195,7 +172,6 @@ const AddProductForm = () => {
                 required
               />
             </div>
-            {/* Current Stock */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Current Stock</label>
               <input
@@ -208,7 +184,6 @@ const AddProductForm = () => {
                 required
               />
             </div>
-            {/* SKU */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">SKU</label>
               <input
@@ -221,7 +196,6 @@ const AddProductForm = () => {
                 required
               />
             </div>
-            {/* Minimum Stock Level */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Minimum Stock Level</label>
               <input
@@ -234,7 +208,6 @@ const AddProductForm = () => {
                 required
               />
             </div>
-            {/* Reorder Quantity */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Reorder Quantity</label>
               <input
@@ -244,6 +217,18 @@ const AddProductForm = () => {
                 onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Reorder Quantity"
+                required
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Barcode</label>
+              <input
+                name="barcode"
+                type="text"
+                value={product.barcode}
+                onChange={handleChange}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="Barcode"
                 required
               />
             </div>
@@ -259,30 +244,6 @@ const AddProductForm = () => {
           </button>
         </div>
       </div>
-
-      <Modal
-        isOpen={isBarcodeModalOpen}
-        onRequestClose={() => setIsBarcodeModalOpen(false)}
-        contentLabel="Enter Barcode"
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col my-2"
-      >
-        <h2 className="text-2xl mb-4">Enter Barcode {barcodeIndex + 1}</h2>
-        <input
-          name="barcode"
-          type="text"
-          value={currentBarcode}
-          onChange={(e) => setCurrentBarcode(e.target.value)}
-          className="shadow appearance-none border rounded  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder={`Barcode ${barcodeIndex + 1}`}
-          required
-        />
-        <button
-          onClick={handleBarcodeSubmit}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
-        >
-          Submit Barcode
-        </button>
-      </Modal>
     </div>
   );
 };
