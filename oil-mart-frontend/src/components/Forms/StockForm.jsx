@@ -3,9 +3,12 @@ import axios from 'axios';
 
 const StockForm = () => {
   const [products, setProducts] = useState([]);
+  const [grades, setGrades] = useState([]);
   const [formData, setFormData] = useState({
     product_id: '',
     quantity: '',
+    sae_name: '',
+    pack_size: '',  
     expiration_date: '',
     buy_price: '',
     purchase_date: '',
@@ -20,7 +23,17 @@ const StockForm = () => {
       .catch(error => {
         console.error('Error fetching products:', error);
       });
+      axios.get('http://localhost:5000/api/sae_grades')
+      .then(response => {
+        setGrades(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching products:', error);
+      });
   }, []);
+  
+    
+
 
   const handleChange = (e) => {
     setFormData({
@@ -45,7 +58,7 @@ const StockForm = () => {
     <div className="max-w-lg mx-auto p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Add Stock</h2>
       <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+      <div className="mb-4">
           <label className="block text-gray-700">Product</label>
           <select
             name="product_id"
@@ -60,11 +73,36 @@ const StockForm = () => {
           </select>
         </div>
         <div className="mb-4">
+          <label className="block text-gray-700">SAE Grade</label>
+          <select
+            name="sae_name"
+            value={formData.sae_name}
+            onChange={handleChange}
+            className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+          >
+            <option value="">Select a product</option>
+            {grades.map(grade => (
+              <option key={grade.sae_id} value={grade.sae_id}>{grade.sae_name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
           <label className="block text-gray-700">Quantity</label>
           <input
             type="number"
             name="quantity"
             value={formData.quantity}
+            onChange={handleChange}
+            className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+          />
+        </div>
+        
+        <div className="mb-4">
+          <label className="block text-gray-700">Pack Size</label>
+          <input
+            type="number"
+            name="pack_size"
+            value={formData.pack_size}
             onChange={handleChange}
             className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
           />

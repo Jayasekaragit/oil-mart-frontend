@@ -4,6 +4,9 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/shared/Layout";
 import Dashboard from "./components/Dashboard";
+import DashboardCashier from "./components/DashboardCashier";
+
+
 import Products from "./components/Products";
 import LoginForm from "./components/Authentication/Login";
 
@@ -11,6 +14,8 @@ import Suppliers from "./components/Owner/Suppliers";
 import Users from "./components/Owner/Users";
 import Test from "./components/Owner/Test";
 import ProtectedRoute from "./useToken";
+import LayoutCashier from "./components/shared/LayoutCashier";
+import Orders from "./components/Forms/Orders";
 
 
 
@@ -39,8 +44,10 @@ function App() {
         <Route path="suppliers" element={<Suppliers />} />
         {/* <Route path="suppliers" element={<Suppliers />} /> */}
       </Route>
-      <Route path="/cashier" element={<ProtectedRoute role="Cashier"><Layout /></ProtectedRoute>}>
-        {/* <Route index element={<Dashboard />} /> */}
+      <Route path="/cashier" element={<ProtectedRoute role="Cashier"><LayoutCashier /></ProtectedRoute>}>
+      <Route path="dashboard" index element={<ProtectedRoute role="Cashier"><DashboardCashier /></ProtectedRoute>} />
+        {/* <Route path="products" element={<Products />} /> */}
+        <Route path="orders" element={<Orders />} />
         {/* <Route path="users" element={<Users />} /> */}
         <Route path="suppliers" element={<Suppliers />} />
         {/* <Route path="suppliers" element={<Suppliers />} /> */}

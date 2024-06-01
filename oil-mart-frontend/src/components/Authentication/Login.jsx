@@ -20,10 +20,10 @@ const LoginForm = () => {
       // Redirect based on role
       if (role === 'Admin') {
       
-        window.location.href = '/admin';
+        window.location.href = '/admin/dashboard';
       } else if (role === 'Cashier') {
 
-        window.location.href = '/products';
+        window.location.href = '/cashier/dashboard';
       }
     } catch (error) {
       console.error('Login failed:', error);
