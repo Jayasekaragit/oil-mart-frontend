@@ -1,73 +1,86 @@
-/* Container for the barcode scanner */
 .scanner-container {
-    display: flex;
-  }
-  
-  /* Left pane styling */
-  .left-pane {
-    width: 75%;
-    padding: 10px;
-  }
-  
-  /* Right pane styling */
-  .right-pane {
-    width: 25%;
-    padding: 10px;
-  }
-  
-  /* Styling for the barcode input */
-  .barcode-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 10px;
-  }
-  
-  /* Styling for tables */
-  .results-table, .cart-table, .bill-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .results-table th, .cart-table th, .bill-table th,
-  .results-table td, .cart-table td, .bill-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .results-table th, .cart-table th, .bill-table th {
-    background-color: #f2f2f2;
-  }
-  
-  /* Styling for modal */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 80%;
-    max-width: 600px;
-  }
-  
-  .modal-content h2 {
-    margin-top: 0;
-  }
-  
-  .modal-content button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+}
+
+.left-pane {
+  width: 60%; /* Adjust the width as needed */
+}
+
+.right-pane {
+  width: 40%; /* Adjust the width as needed */
+  padding: 1rem;
+}
+
+.barcode-input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.results-table th,
+.results-table td {
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem;
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.cart-table th,
+.cart-table td {
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem;
+}
+
+.money-received-input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 1rem;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.bill-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.bill-table th,
+.bill-table td {
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem;
+}
+
+.bill-table th {
+  background-color: #f7fafc;
+}
+
+.bill-table td:last-child {
+  text-align: right;
+}

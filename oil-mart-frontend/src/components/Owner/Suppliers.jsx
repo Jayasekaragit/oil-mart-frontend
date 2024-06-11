@@ -12,6 +12,7 @@ import axios from "axios";
 import SupplierTable from "../Tables/SupplierTable";
 // import Navbar from "../shared/Navbar";
 import SupplierForm from "../Forms/SupplierForm";
+import InventoryTable from "../Tables/InventoryTable";
 
 export default function Suppliers() {
 //   const [formData, setFormData] = useState({
@@ -82,17 +83,25 @@ export default function Suppliers() {
 //     } catch (error) {
 //         console.error('Error updating user:', error);
 //         // Handle error
+
 //     }
 // };
 
 
+
   return (
     <>
-      <div className="flex flex-row">
         {/* <Navbar /> */}
+        <div className="flex flex-row m-4 p-6">
+          <div className="basis-1/3 p-6">
        <SupplierForm />
-       <SupplierTable />
-      </div>
+          </div>
+          <div className="basis-2/3 p-6">
+       <SupplierTable />  
+            
+          </div>
+      
+        </div>
     </>
   );
 }

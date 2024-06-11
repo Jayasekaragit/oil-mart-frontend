@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import BillPDF from "./Reports/BillPDF";
 import './BarcodeScanner.css'; // Make sure to include your custom CSS for styling
 
-function BarcodeScanner() {
+function BarcodeScanner({userName}) {
   const [results, setResults] = useState([]);
   const [searchBarcode, setSearchBarcode] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cart, setCart] = useState([]);
   const [showBill, setShowBill] = useState(false);
-
+  const [moneyReceived, setMoneyReceived] = useState("");
+  const [balance, setBalance] = useState(0);
+  const[cashierName, setCashierName] = useState(userName);
+// console.log(userName)
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
         const res = await axios.get('http://localhost:5000/cashier/products');
+        setTimeout(() => {
+          // window.location.reload();
+          fetchAllProducts();
+        }, 500);
         setResults(res.data);
       } catch (err) {
         console.log(err);
@@ -33,6 +41,12 @@ function BarcodeScanner() {
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' && selectedProduct) {
       event.preventDefault();
+
+      if (selectedProduct.total_quantity <= 0) {
+        alert(`The product ${selectedProduct.product_name} is out of stock and cannot be added to the cart.`);
+        return;
+      }
+
       let quantity;
 
       // Check if the product is a barrel type
@@ -45,10 +59,17 @@ function BarcodeScanner() {
       }
 
       if (quantity && !isNaN(quantity) && Number(quantity) > 0) {
+        const requestedQuantity = Number(quantity);
+
+        if (requestedQuantity > selectedProduct.total_quantity) {
+          alert(`Only ${selectedProduct.total_quantity} units of ${selectedProduct.product_name} are available in stock.`);
+          return;
+        }
+
         const productWithQuantity = { 
           ...selectedProduct, 
-          quantity: Number(quantity),
-          totalPrice: selectedProduct.sell_price * Number(quantity) // Calculate total price
+          quantity: requestedQuantity,
+          totalPrice: selectedProduct.sell_price * requestedQuantity // Calculate total price
         };
 
         const existingProductIndex = cart.findIndex(item => item.barcode === selectedProduct.barcode);
@@ -56,7 +77,11 @@ function BarcodeScanner() {
         if (existingProductIndex !== -1) {
           const updatedCart = cart.map((item, index) => {
             if (index === existingProductIndex) {
-              const updatedQuantity = item.quantity + Number(quantity);
+              const updatedQuantity = item.quantity + requestedQuantity;
+              if (updatedQuantity > selectedProduct.total_quantity) {
+                alert(`Only ${selectedProduct.total_quantity - item.quantity} additional units of ${selectedProduct.product_name} are available in stock.`);
+                return item;
+              }
               return { 
                 ...item, 
                 quantity: updatedQuantity,
@@ -72,8 +97,22 @@ function BarcodeScanner() {
 
         setSearchBarcode(""); // Clear search input after adding
       } else {
-        alert("Please enter a valid quantity.");
+        alert("Please enter a valid positive quantity.");
       }
+    }
+  };
+  
+  const generateReport = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/inventory/report', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'inventory_report.pdf');
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error generating report:', error);
     }
   };
 
@@ -94,8 +133,12 @@ function BarcodeScanner() {
 
   const handleDecreaseQuantity = (barcode) => {
     const updatedCart = cart.map(item => {
-      if (item.barcode === barcode && item.quantity > 1) {
+      if (item.barcode === barcode) {
         const updatedQuantity = item.quantity - 1;
+        if (updatedQuantity < 1) {
+          alert("Quantity cannot be less than 1.");
+          return item;
+        }
         return {
           ...item,
           quantity: updatedQuantity,
@@ -107,12 +150,52 @@ function BarcodeScanner() {
     setCart(updatedCart);
   };
 
+  const handleMoneyReceivedChange = (event) => {
+    setMoneyReceived(event.target.value);
+  };
+
   const handleSubmitCart = () => {
+    const totalAmount = cart.reduce((acc, current) => acc + (current.totalPrice || 0), 0);
+    const receivedAmount = parseFloat(moneyReceived);
+    if (!isNaN(receivedAmount)) {
+      setBalance(receivedAmount - totalAmount);
+    } else {
+      alert("Please enter a valid amount for money received.");
+    }
     setShowBill(true);
   };
 
   const handleCloseBill = () => {
     setShowBill(false);
+  };
+
+  const handleSaveAndPrintBill = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/cashier/transactions', {
+        transaction_items: cart.map(item => ({
+          product_id: item.product_id,
+          quantity: item.quantity,
+          price: item.sell_price,
+          total_price: item.totalPrice,
+          
+        })),
+        moneyReceived: moneyReceived,
+        cashierName: userName
+      });
+  
+      const transactionId = response.data.transaction_id;
+  
+      console.log(`Transaction ID: ${transactionId}`);
+  
+      setShowBill(false);
+
+      // Clear the cart
+      setCart([]);
+      setMoneyReceived(""); 
+      setBalance(0); 
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -187,7 +270,17 @@ function BarcodeScanner() {
           </tbody>
         </table>
         {cart.length === 0 && <div>No products added to the cart</div>}
+        <div>
+          <label>Money Received:</label>
+          <input 
+            type="number" 
+            value={moneyReceived} 
+            onChange={handleMoneyReceivedChange} 
+            className="money-received-input"
+          />
+        </div>
         <button onClick={handleSubmitCart}>Submit Cart</button>
+        <button onClick={generateReport}>Generate Inventory Report</button>
       </div>
 
       {showBill && (
@@ -218,9 +311,24 @@ function BarcodeScanner() {
                     cart.reduce((acc, current) => acc + (current.totalPrice || 0), 0).toFixed(2)
                   }</td>
                 </tr>
+                <tr>
+                  <td colSpan="3">Money Received</td>
+                  <td>Rs {moneyReceived}</td>
+                </tr>
+                <tr>
+                  <td colSpan="3">Balance</td>
+                  <td>Rs {balance.toFixed(2)}</td>
+                </tr>
               </tbody>
             </table>
+            <div className="modal-content">
+      <h2>Bill Summary</h2>
+      {/* Render the BillPDF component */}
+      <BillPDF  cashierName={cashierName} cart={cart} moneyReceived={moneyReceived} balance={balance} handleCloseBill={handleCloseBill} handleSaveAndPrintBill={handleSaveAndPrintBill} />
+    </div>
             <button onClick={handleCloseBill}>Close</button>
+            <button onClick={handleSaveAndPrintBill}>Print</button>
+            
           </div>
         </div>
       )}

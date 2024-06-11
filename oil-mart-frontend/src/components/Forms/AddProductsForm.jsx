@@ -4,13 +4,9 @@ import axios from 'axios';
 const AddProductForm = () => {
   const [subCategories, setSubCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [warehouses, setWarehouses] = useState([]);
   const [product, setProduct] = useState({
     sub_cat_id: '',
     brand_id: '',
-    supplier_id: '',
-    warehouse_id: '',
     p_name: '',
     size: '',
     sell_price: '',
@@ -28,11 +24,6 @@ const AddProductForm = () => {
       const brandsResponse = await axios.get('http://localhost:5000/api/brands');
       setBrands(brandsResponse.data);
 
-      const suppliersResponse = await axios.get('http://localhost:5000/api/suppliers');
-      setSuppliers(suppliersResponse.data);
-
-      const warehousesResponse = await axios.get('http://localhost:5000/api/warehouses');
-      setWarehouses(warehousesResponse.data);
     };
 
     fetchData();
@@ -96,41 +87,7 @@ const AddProductForm = () => {
                   </option>
                 ))}
               </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Supplier</label>
-              <select
-                name="supplier_id"
-                value={product.supplier_id}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                required
-              >
-                <option value="">Select Supplier</option>
-                {suppliers.map((supplier) => (
-                  <option key={supplier.supplier_id} value={supplier.supplier_id}>
-                    {supplier.supplier_name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Warehouse</label>
-              <select
-                name="warehouse_id"
-                value={product.warehouse_id}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                required
-              >
-                <option value="">Select Warehouse</option>
-                {warehouses.map((warehouse) => (
-                  <option key={warehouse.warehouse_id} value={warehouse.warehouse_id}>
-                    {warehouse.warehouse_name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            </div> 
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Product Name</label>
               <input

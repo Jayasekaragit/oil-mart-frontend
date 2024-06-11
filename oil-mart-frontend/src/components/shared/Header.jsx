@@ -3,24 +3,24 @@ import { HiChatAlt, HiOutlineBell, HiOutlineSearch } from "react-icons/hi";
 import { Menu, Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react'
 import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function Header({userName}) {
   return (
     <div className="bg-white h-16 px-4 justify-between flex items-center ">
       <div className="relative">
-          <HiOutlineSearch fontSize={20} className="text-gray-50 absolute top1/2 translate-y-1/2 p--4"/>
-        <input 
+          {/* <HiOutlineSearch fontSize={20} className="text-gray-50 absolute top1/2 translate-y-1/2 p--4"/> */}
+        {/* <input 
           type="text"
           placeholder="Search..."
           className=" pr-4  text-sm focus:outline-none active:outline-none h-10 w-[24rem] rounded-sm px-4 bg-slate-600 "
-        />
+        /> */}
       </div>
       
       <div className="flex items-center px-3">
 
       <Popover className="relative px-3">
           <>
-          <PopoverButton className=" p-3 rounded-sm inline-flex text-gray-700 hover:text-opacity-100 focus:outline-none">
-            <span>Pasindu Jayasekara</span>
+          <PopoverButton  className=" p-3 rounded-sm inline-flex text-gray-700 hover:text-opacity-100 focus:outline-none">
+            <span></span>
           </PopoverButton>
          
 

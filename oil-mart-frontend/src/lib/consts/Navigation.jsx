@@ -17,33 +17,47 @@ export const DASHBOARD_SIDEBAR_LINKS = [
 		icon: <HiOutlineViewGrid />
 	},
 	{
-		key: 'products',
-		label: 'Products',
-		path: '/admin/products',
-		icon: <HiOutlineCube />
-	},
-	{
-		key: 'orders',
-		label: 'Orders',
-		path: '/orders',
-		icon: <HiOutlineShoppingCart />
-	},
-	{
-		key: 'customers',
-		label: 'Customers',
-		path: '/customers',
-		icon: <HiOutlineUsers />
+		key: 'inventory',
+		label: 'Inventory',
+		path: '/admin/inventory',
+		icon: <HiOutlineViewGrid />
 	},
 	{
 		key: 'transactions',
 		label: 'Transactions',
-		path: '/transactions',
+		path: '/admin/transactions',
 		icon: <HiOutlineDocumentText />
 	},
 	{
-		key: 'messages',
-		label: 'Messages',
-		path: '/messages',
+		key: 'add_new_product',
+		label: 'Add New Product',
+		path: '/admin/add_new_product',
+		icon: <HiOutlineCube />
+	},
+
+	{
+		key: 'new_stock',
+		label: 'Add New Supply',
+		path: '/admin/new_stock',
+		icon: <HiOutlineCube />
+	},
+	{	
+		key: 'changeProducts',
+		label: 'Change Products',
+		path: '/admin/changeProducts',
+		icon: <HiOutlineShoppingCart />
+	},
+	// {
+	// 	key: 'customers',
+	// 	label: 'Customers',
+	// 	path: '/customers',
+	// 	icon: <HiOutlineUsers />
+	// },
+	
+	{
+		key: 'notifications',
+		label: 'Notifications',
+		path: '/admin/notifications',
 		icon: <HiOutlineAnnotation />
 	},
 	{
