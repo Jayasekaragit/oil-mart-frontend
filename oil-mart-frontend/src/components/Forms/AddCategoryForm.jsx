@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNotification } from '../NotificationContext';
 
 const AddCategoryForm = () => {
   const [category, setCategory] = useState({ catergory_type: '' });
+  const {addNotification} = useNotification();
 
   const handleChange = (e) => {
     setCategory({ ...category, [e.target.name]: e.target.value });
@@ -13,6 +15,7 @@ const AddCategoryForm = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/categories', category);
       console.log(response.data);
+      addNotification('Catergory Added  successfully');
       // Reset form or handle success
     } catch (error) {
       console.error('Error adding category:', error);

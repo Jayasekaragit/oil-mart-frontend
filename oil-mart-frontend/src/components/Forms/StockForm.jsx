@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+import { useNotification } from '../NotificationContext';
+
 const StockForm = () => {
   const [products, setProducts] = useState([]);
   const [grades, setGrades] = useState([]);
@@ -16,6 +18,8 @@ const StockForm = () => {
     purchase_date: "",
     barcode: "",	
   });
+
+  const {addNotification} = useNotification();
 
   useEffect(() => {
     // Fetch products from the backend
@@ -58,6 +62,7 @@ const StockForm = () => {
       .post("http://localhost:5000/api/stock", formData)
       .then((response) => {
         console.log(response.data);
+        addNotification('Product Stock Added  successfully');
         // Handle success (e.g., display a success message, clear the form, etc.)
       })
       .catch((error) => {

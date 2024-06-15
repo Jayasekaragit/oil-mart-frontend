@@ -23,6 +23,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
           {/* <ChartSales /> */}
+            <Notifications/>
           <ProductsTable />
           <ViewReturnTable />
         </div>
@@ -39,6 +40,8 @@ export default function Dashboard() {
           <div className="bg-white rounded shadow-md p-6">
             <SalesReport reportType={reportType} />
           </div>
+        </div>
+        <div>
         </div>
       </div>
       {/* <Notifications /> */}

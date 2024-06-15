@@ -6,6 +6,7 @@ const linkClasses = 'flex items-center gap-2 py-2 px-3 hover:bg-neutral-700 hove
 import classNames from 'classnames'
 import { HiOutlineLogout } from 'react-icons/hi';
 
+
 export default function Sidebar() {
   return (
     <div className='flex flex-col text-white bg-neutral-900 w-60 p-3'>
@@ -18,7 +19,7 @@ export default function Sidebar() {
           <SidebarLink key={item.key} item={item}/>
         ))}
       </div>
-      <div className='flex flex-col gap-0.5 pt-2 border-t border-neutral-700'>
+      {/* <div className='flex flex-col gap-0.5 pt-2 border-t border-neutral-700'>
         {DASHBOARD_SIDEBAR_BOTTOM_LINKS.map(item=>(
           <SidebarLink key={item.key} item={item}/>
         ))}
@@ -29,7 +30,7 @@ export default function Sidebar() {
           Logout
         </div>
 
-      </div>
+      </div> */}
     </div>
   )
 }

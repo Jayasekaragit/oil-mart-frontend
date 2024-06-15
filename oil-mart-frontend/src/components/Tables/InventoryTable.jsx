@@ -3,10 +3,13 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable'
 
+
+
 const InventoryTable = () => {
     const [inventoryData, setInventoryData] = useState([]);
     const [sortedData, setSortedData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+ 
 
     useEffect(() => {
         // Fetch inventory data from API

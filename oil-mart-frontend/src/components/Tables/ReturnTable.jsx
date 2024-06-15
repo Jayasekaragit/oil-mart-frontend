@@ -5,6 +5,10 @@ const ReturnTable = () => {
   const [stock, setStock] = useState([]);
   const [selectedStock, setSelectedStock] = useState(null);
   const [returnData, setReturnData] = useState({ quantity: '', supplier_name: '', purchase_date: '' });
+  const formatDate = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
+};
 
   useEffect(() => {
     // Fetch stock data from the API
@@ -73,7 +77,7 @@ const ReturnTable = () => {
               <td className="py-2 px-4 border-b">{item.p_name}</td>
               <td className="py-2 px-4 border-b">{item.quantity}</td>
               <td className="py-2 px-4 border-b">{item.supplier_name}</td>
-              <td className="py-2 px-4 border-b">{item.purchase_date}</td>
+              <td className="py-2 px-4 border-b">{formatDate(item.purchase_date)}</td>
             </tr>
           ))}
         </tbody>

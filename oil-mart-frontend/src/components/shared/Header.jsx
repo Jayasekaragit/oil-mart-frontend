@@ -2,6 +2,7 @@ import React from "react";
 import { HiChatAlt, HiOutlineBell, HiOutlineSearch } from "react-icons/hi";
 import { Menu, Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react'
 import { Link } from "react-router-dom";
+import Logout from "../Logout";
 
 export default function Header({userName}) {
   return (
@@ -41,7 +42,7 @@ export default function Header({userName}) {
                 <a className="block rounded-lg py-2 px-3 transition hover:bg-white/5" href="#">
                   <p className="font-semibold text-white"><Link className="text-white hover:text-black" to={"/signup"}>SignOut</Link></p>
               
-    
+
                 </a>
                 <a className="block rounded-lg py-2 px-3 transition hover:bg-white/5" href="#">
                 <p className="font-semibold text-white"><Link className="text-white hover:text-black" to={"/products"}>Your Profile</Link></p>
@@ -51,6 +52,7 @@ export default function Header({userName}) {
             </PopoverPanel>
           </Transition>
     </Popover>
+                <Logout/>
     
 
           <HiChatAlt fontSize={24} className=""/>

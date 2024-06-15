@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNotification } from '../NotificationContext';
 
 const ProductsTable = () => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const {addNotification} = useNotification();
 
   useEffect(() => {
     // Fetch products data from the API
@@ -29,6 +31,7 @@ const ProductsTable = () => {
           product.product_id === updatedProduct.product_id ? updatedProduct : product
         );
         setProducts(updatedProducts);
+        addNotification('Product details changed successfully');
         setSelectedProduct(null); // Clear the selected product
       })
       .catch(error => {

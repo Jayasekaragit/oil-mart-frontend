@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import AddUserForm from "../Forms/AddUserForm";
 import UserTable from "../Tables/UserTable";
 import axios from "axios";
+import { useNotification } from '../NotificationContext';
+
 
 export default function Users() {
   const [formData, setFormData] = useState({
@@ -13,8 +15,10 @@ export default function Users() {
   });
   const [errors, setErrors] = useState({});
   const [result, setResults] = useState([]);
+  const {addNotification} = useNotification();
 
-  const fetchAllProducts = async () => {
+
+  const fetchAllUsers = async () => {
     try {
       const res = await axios.get("http://localhost:5000/users");
       setResults(res.data);
@@ -24,7 +28,7 @@ export default function Users() {
   };
 
   useEffect(() => {
-    fetchAllProducts();
+    fetchAllUsers();
   }, []);
 
   const handleSubmit = async (event) => {
@@ -35,10 +39,11 @@ export default function Users() {
         formData
       );
       setTimeout(() => {
-        fetchAllProducts();
+        fetchAllUsers();
       }, 500);
       console.log("Response:", response.data);
-      alert("User registration successful");
+      addNotification('User Added  successfully');
+      // alert("User registration successful");
     } catch (error) {
       console.error("Error adding user:", error.response.data);
       alert("Failed to add user: " + (error.response.data.message || error.message));
@@ -49,6 +54,7 @@ export default function Users() {
     try {
       await axios.delete(`http://localhost:5000/admin/users/${id}`);
       console.log("User deleted:", id);
+      addNotification('User deleted successfully');
       setResults(result.filter((user) => user.id !== id));
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -62,8 +68,9 @@ export default function Users() {
         updatedUserData
       );
       console.log("User updated successfully:", response.data);
+      addNotification('User Updated  successfully');
       setTimeout(() => {
-        fetchAllProducts();
+        fetchAllUsers();
       }, 500);
     } catch (error) {
       console.error("Error updating user:", error);

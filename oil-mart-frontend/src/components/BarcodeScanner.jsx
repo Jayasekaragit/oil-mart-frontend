@@ -11,14 +11,17 @@ function BarcodeScanner({userName}) {
   const [showBill, setShowBill] = useState(false);
   const [moneyReceived, setMoneyReceived] = useState("");
   const [balance, setBalance] = useState(0);
-  const[cashierName, setCashierName] = useState(userName);
-// console.log(userName)
+  const [cashierName, setCashierName] = useState(userName);
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [discountedTotal, setDiscountedTotal] = useState(0);
+  const [isCreditSale, setIsCreditSale] = useState(0); // New state for credit sale
+  const [customerName, setCustomerName] = useState(""); // New state for customer name
+
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
         const res = await axios.get('http://localhost:5000/cashier/products');
         setTimeout(() => {
-          // window.location.reload();
           fetchAllProducts();
         }, 500);
         setResults(res.data);
@@ -37,6 +40,12 @@ function BarcodeScanner({userName}) {
       setSelectedProduct(null); // Clear selection if search is empty
     }
   }, [searchBarcode, results]);
+
+  useEffect(() => {
+    const totalAmount = cart.reduce((acc, current) => acc + (current.totalPrice || 0), 0);
+    const discountAmount = (totalAmount * discountPercentage) / 100;
+    setDiscountedTotal(totalAmount - discountAmount);
+  }, [cart, discountPercentage]);
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' && selectedProduct) {
@@ -101,7 +110,7 @@ function BarcodeScanner({userName}) {
       }
     }
   };
-  
+
   const generateReport = async () => {
     try {
       const response = await axios.get('http://localhost:5000/inventory/report', { responseType: 'blob' });
@@ -135,8 +144,8 @@ function BarcodeScanner({userName}) {
     const updatedCart = cart.map(item => {
       if (item.barcode === barcode) {
         const updatedQuantity = item.quantity - 1;
-        if (updatedQuantity < 1) {
-          alert("Quantity cannot be less than 1.");
+        if (updatedQuantity < 0) {
+          alert("Quantity cannot be less than 0.");
           return item;
         }
         return {
@@ -156,9 +165,11 @@ function BarcodeScanner({userName}) {
 
   const handleSubmitCart = () => {
     const totalAmount = cart.reduce((acc, current) => acc + (current.totalPrice || 0), 0);
+    const discountAmount = (totalAmount * discountPercentage) / 100;
+    const discountedTotal = totalAmount - discountAmount;
     const receivedAmount = parseFloat(moneyReceived);
     if (!isNaN(receivedAmount)) {
-      setBalance(receivedAmount - totalAmount);
+      setBalance(receivedAmount - discountedTotal);
     } else {
       alert("Please enter a valid amount for money received.");
     }
@@ -167,6 +178,13 @@ function BarcodeScanner({userName}) {
 
   const handleCloseBill = () => {
     setShowBill(false);
+  };
+  const handleCustomerNameChange = (event) => {
+    setCustomerName(event.target.value);
+  };
+  const handleIsCreditSaleChange = (event) => {
+    setIsCreditSale(event.target.checked);
+  
   };
 
   const handleSaveAndPrintBill = async () => {
@@ -177,158 +195,214 @@ function BarcodeScanner({userName}) {
           quantity: item.quantity,
           price: item.sell_price,
           total_price: item.totalPrice,
-          
         })),
         moneyReceived: moneyReceived,
-        cashierName: userName
+        cashierName: userName,
+        discountPercentage: discountPercentage, // Include discount percentage in the transaction data
+        is_credit_sale: isCreditSale, // Include the credit sale status
+        customerName: isCreditSale ? customerName : null // Include the customer name if it's a credit sale
       });
   
-      const transactionId = response.data.transaction_id;
+      // const transactionId = response.data.transaction_id;
+      // const billPdfResponse = await axios.get(`http://localhost:5000/cashier/transactions/${transactionId}/bill`, { responseType: 'blob' });
+      // const url = window.URL.createObjectURL(new Blob([billPdfResponse.data]));
+      // const link = document.createElement('a');
+      // link.href = url;
+      // link.setAttribute('download', 'bill.pdf');
+      // document.body.appendChild(link);
+      // link.click();
   
-      console.log(`Transaction ID: ${transactionId}`);
-  
-      setShowBill(false);
-
-      // Clear the cart
+      // Clear cart and form fields after saving
       setCart([]);
+      setSearchBarcode(""); 
       setMoneyReceived(""); 
+      setDiscountPercentage(0); // Reset discount percentage
       setBalance(0); 
     } catch (error) {
       console.error(error);
     }
   };
 
+
   return (
-    <div className="scanner-container flex">
-      <div className="left-pane basis-3/5">
-        <input
-          autoFocus
-          type="text"
-          placeholder="Search barcode"
-          value={searchBarcode}
-          onChange={(e) => setSearchBarcode(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="barcode-input"
-        />
-        <br />
-        <table className="results-table">
+    <div className="barcode-scanner flex">
+      <div className="left-pane basis-3/5 p-4">
+        <div className="mb-4">
+          <label className="block text-gray-700">Search Barcode:</label>
+          <input 
+            autoFocus
+            type="text"
+            placeholder="Search barcode"
+            value={searchBarcode}
+            onChange={(e) => setSearchBarcode(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="barcode-input border-2 border-gray-300 p-2 rounded-md"
+          />
+        </div>
+        <table className="results-table w-full border-collapse border border-gray-300">
           <thead>
-            <tr>
-              <th>Brand</th>
-              <th>Item Type</th>
-              <th>Product Name</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Barcode</th>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 p-2">Brand</th>
+              <th className="border border-gray-300 p-2">Item Type</th>
+              <th className="border border-gray-300 p-2">Product Name</th>
+              <th className="border border-gray-300 p-2">Price</th>
+              <th className="border border-gray-300 p-2">Quantity</th>
+              <th className="border border-gray-300 p-2">Barcode</th>
             </tr>
           </thead>
           <tbody>
             {results.filter(item => searchBarcode !== "" ? item.barcode.includes(searchBarcode) : item)
-                     .map((data, index) => (
-              <tr key={index}>
-                <td>{data.brand_name}</td>
-                <td>{`${data.sub_cat_name}`}</td>
-                <td>{data.product_name}</td>
-                <td>Rs {data.sell_price}</td>
-                <td>{data.total_quantity}</td>
-                <td>{data.barcode}</td>
-              </tr>
-            ))}
+              .map((data, index) => (
+                <tr key={index} className="hover:bg-gray-200">
+                  <td className="border border-gray-300 p-2">{data.brand_name}</td>
+                  <td className="border border-gray-300 p-2">{`${data.sub_cat_name}`}</td>
+                  <td className="border border-gray-300 p-2">{data.product_name}</td>
+                  <td className="border border-gray-300 p-2">Rs {data.sell_price}</td>
+                  <td className="border border-gray-300 p-2">{data.total_quantity}</td>
+                  <td className="border border-gray-300 p-2">{data.barcode}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
       <div className="right-pane basis-2/5 p-4">
-        <table className="cart-table">
+        <table className="cart-table w-full border-collapse border border-gray-300 mb-4">
           <thead>
-            <tr>
-              <th>Name</th>
-              <th>Quantity</th>
-              <th>Price</th>
-              <th>Total Price</th>
-              <th>Actions</th>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 p-2">Name</th>
+              <th className="border border-gray-300 p-2">Quantity</th>
+              <th className="border border-gray-300 p-2">Price</th>
+              <th className="border border-gray-300 p-2">Total Price</th>
+              <th className="border border-gray-300 p-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {cart.map((product, index) => (
-              <tr key={index}>
-                <td>{product.product_name}</td>
-                <td>{product.quantity}</td>
-                <td>Rs {product.sell_price}</td>
-                <td>Rs {product.totalPrice.toFixed(2)}</td>
-                <td>
+              <tr key={index} className="hover:bg-gray-200">
+                <td className="border border-gray-300 p-2">{product.product_name}</td>
+                <td className="border border-gray-300 p-2">{product.quantity}</td>
+                <td className="border border-gray-300 p-2">Rs {product.sell_price}</td>
+                <td className="border border-gray-300 p-2">Rs {product.totalPrice.toFixed(2)}</td>
+                <td className="border border-gray-300 p-2">
                   <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => handleIncreaseQuantity(product.barcode)}>+</button>
                   <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full" onClick={() => handleDecreaseQuantity(product.barcode)}>-</button>
                 </td>
               </tr>
             ))}
             <tr>
-              <td colSpan="3">Total</td>
-              <td>Rs {
-                 cart.reduce((acc, current) => acc + (current.totalPrice || 0), 0).toFixed(2)
+              <td colSpan="3" className="border border-gray-300 p-2 font-bold">Total</td>
+              <td colSpan="2" className="border border-gray-300 p-2">Rs {
+                cart.reduce((acc, current) => acc + (current.totalPrice || 0), 0).toFixed(2)
               }</td>
             </tr>
           </tbody>
         </table>
         {cart.length === 0 && <div>No products added to the cart</div>}
-        <div>
-          <label>Money Received:</label>
-          <input 
-            type="number" 
-            value={moneyReceived} 
-            onChange={handleMoneyReceivedChange} 
-            className="money-received-input"
+        <form className="mb-4">
+          <div className="mb-4">
+            <label className="block text-gray-700">Discount Percentage:</label>
+            <input 
+              type="number" 
+              value={discountPercentage} 
+              onChange={(e) => setDiscountPercentage(parseFloat(e.target.value))} 
+              className="border-2 border-gray-300 p-2 rounded-md w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Total After Discount:</label>
+            <input 
+              type="text" 
+              value={discountedTotal.toFixed(2)} 
+              readOnly
+              className="border-2 border-gray-300 p-2 rounded-md w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Money Received:</label>
+            <input 
+              type="number" 
+              value={moneyReceived} 
+              onChange={handleMoneyReceivedChange} 
+              className="border-2 border-gray-300 p-2 rounded-md w-full"
+            />
+          </div>
+          <div className="input-container">
+          <label>Credit Sale:</label>
+          <input
+            type="checkbox"
+            checked={isCreditSale}
+            onChange={handleIsCreditSaleChange}
           />
         </div>
-        <button onClick={handleSubmitCart}>Submit Cart</button>
-        <button onClick={generateReport}>Generate Inventory Report</button>
+        {isCreditSale && (
+          <div className="input-container">
+            <label>Customer Name:</label>
+            <input
+              type="text"
+              value={customerName}
+              onChange={handleCustomerNameChange}
+            />
+          </div>
+        )}
+          <button type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md" onClick={handleSubmitCart}>Submit Cart</button>
+          {/* <button type="button" className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md ml-2" onClick={generateReport}>Generate Inventory Report</button> */}
+        </form>
       </div>
 
       {showBill && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Bill Summary</h2>
-            <table className="bill-table">
+        <div className="modal-overlay fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="modal-content bg-white p-8 rounded-md">
+            <h2 className="text-2xl font-bold mb-4">Bill Summary</h2>
+            <table className="bill-table w-full border-collapse border border-gray-300 mb-4">
               <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Quantity</th>
-                  <th>Price</th>
-                  <th>Total Price</th>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 p-2">Name</th>
+                  <th className="border border-gray-300 p-2">Quantity</th>
+                  <th className="border border-gray-300 p-2">Price</th>
+                  <th className="border border-gray-300 p-2">Total Price</th>
                 </tr>
               </thead>
               <tbody>
                 {cart.map((product, index) => (
-                  <tr key={index}>
-                    <td>{product.product_name}</td>
-                    <td>{product.quantity}</td>
-                    <td>Rs {product.sell_price}</td>
-                    <td>Rs {product.totalPrice.toFixed(2)}</td>
+                  <tr key={index} className="hover:bg-gray-200">
+                    <td className="border border-gray-300 p-2">{product.product_name}</td>
+                    <td className="border border-gray-300 p-2">{product.quantity}</td>
+                    <td className="border border-gray-300 p-2">Rs {product.sell_price}</td>
+                    <td className="border border-gray-300 p-2">Rs {product.totalPrice.toFixed(2)}</td>
                   </tr>
                 ))}
                 <tr>
-                  <td colSpan="3">Total</td>
-                  <td>Rs {
+                  <td colSpan="3" className="border border-gray-300 p-2 font-bold">Total</td>
+                  <td className="border border-gray-300 p-2">Rs {
                     cart.reduce((acc, current) => acc + (current.totalPrice || 0), 0).toFixed(2)
                   }</td>
                 </tr>
                 <tr>
-                  <td colSpan="3">Money Received</td>
-                  <td>Rs {moneyReceived}</td>
+                  <td colSpan="3" className="border border-gray-300 p-2 font-bold">Discount ({discountPercentage}%)</td>
+                  <td className="border border-gray-300 p-2">Rs {
+                    ((cart.reduce((acc, current) => acc + (current.totalPrice || 0), 0) * discountPercentage) / 100).toFixed(2)
+                  }</td>
                 </tr>
                 <tr>
-                  <td colSpan="3">Balance</td>
-                  <td>Rs {balance.toFixed(2)}</td>
+                  <td colSpan="3" className="border border-gray-300 p-2 font-bold">Total After Discount</td>
+                  <td className="border border-gray-300 p-2">Rs {
+                    discountedTotal.toFixed(2)
+                  }</td>
+                </tr>
+                <tr>
+                  <td colSpan="3" className="border border-gray-300 p-2 font-bold">Money Received</td>
+                  <td className="border border-gray-300 p-2">Rs {moneyReceived}</td>
+                </tr>
+                <tr>
+                  <td colSpan="3" className="border border-gray-300 p-2 font-bold">Balance</td>
+                  <td className="border border-gray-300 p-2">Rs {balance.toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
-            <div className="modal-content">
-      <h2>Bill Summary</h2>
-      {/* Render the BillPDF component */}
-      <BillPDF  cashierName={cashierName} cart={cart} moneyReceived={moneyReceived} balance={balance} handleCloseBill={handleCloseBill} handleSaveAndPrintBill={handleSaveAndPrintBill} />
-    </div>
-            <button onClick={handleCloseBill}>Close</button>
-            <button onClick={handleSaveAndPrintBill}>Print</button>
-            
+            <div className="flex gap-4">
+              <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md" onClick={handleSaveAndPrintBill}>Save & Print</button>
+              <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md" onClick={handleCloseBill}>Close</button>
+            </div>
           </div>
         </div>
       )}

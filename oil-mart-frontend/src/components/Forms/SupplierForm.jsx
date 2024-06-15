@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+import { useNotification } from '../NotificationContext';
+
 const SupplierForm = () => {
   const [formData, setFormData] = useState({
     s_name: '',
@@ -9,6 +11,8 @@ const SupplierForm = () => {
   });
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const {addNotification} = useNotification();
+
 
   const handleChange = (e) => {
     setFormData({
@@ -25,6 +29,7 @@ const SupplierForm = () => {
     axios.post('http://localhost:5000/api/suppliers', formData)
       .then(response => {
         setSuccessMessage('Supplier added successfully!');
+        addNotification('Supplier added successfully');
         setFormData({ s_name: '', contact_info: '', supplier_loc:'' }); // Clear form after submission
       })
       .catch(error => {
