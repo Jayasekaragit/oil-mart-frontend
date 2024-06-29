@@ -13,38 +13,19 @@ export const DASHBOARD_SIDEBAR_LINKS = [
 	{
 		key: 'dashboard',
 		label: 'Dashboard',
-		path: '/admin/dashboard',
+		path: '/cashier/dashboard',
 		icon: <HiOutlineViewGrid />
 	},
 	{
-		key: 'inventory',
-		label: 'Inventory',
-		path: '/admin/inventory',
-		icon: <HiOutlineViewGrid />
-	},
-	{
-		key: 'transactions',
-		label: 'Transactions',
-		path: '/admin/transactions',
-		icon: <HiOutlineDocumentText />
-	},
-	{
-		key: 'add_new_product',
-		label: 'Add New Product',
-		path: '/admin/add_new_product',
+		key: 'products',
+		label: 'Products',
+		path: '/cashier/products',
 		icon: <HiOutlineCube />
 	},
-
 	{
-		key: 'new_stock',
-		label: 'Add New Supply',
-		path: '/admin/new_stock',
-		icon: <HiOutlineCube />
-	},
-	{	
-		key: 'changeProducts',
-		label: 'Change Products',
-		path: '/admin/changeProducts',
+		key: 'return',
+		label: 'Return Products',
+		path: '/cashier/return',
 		icon: <HiOutlineShoppingCart />
 	},
 	// {
@@ -53,25 +34,30 @@ export const DASHBOARD_SIDEBAR_LINKS = [
 	// 	path: '/customers',
 	// 	icon: <HiOutlineUsers />
 	// },
-	
 	{
-		key: 'notifications',
-		label: 'Notifications',
-		path: '/admin/notifications',
-		icon: <HiOutlineAnnotation />
+		key: 'transactions',
+		label: 'Transactions',
+		path: '/cashier/transactions',
+		icon: <HiOutlineDocumentText />
 	},
+	// {
+	// 	key: 'messages',
+	// 	label: 'Messages',
+	// 	path: '/messages',
+	// 	icon: <HiOutlineAnnotation />
+	// },
 	{
 		key: 'suppliers',
 		label: 'Suppliers',
-		path: '/admin/suppliers',
+		path: '/cashier/suppliers',
 		icon: <HiOutlineAnnotation />
 	},
-	{
-		key: 'users',
-		label: 'Manage Users',
-		path: '/admin/users',
-		icon: <HiOutlineAnnotation />
-	}
+	// {
+	// 	key: 'users',
+	// 	label: 'Manage Users',
+	// 	path: '/cashier/users',
+	// 	icon: <HiOutlineAnnotation />
+	// }
 ]
 
 export const DASHBOARD_SIDEBAR_BOTTOM_LINKS = [

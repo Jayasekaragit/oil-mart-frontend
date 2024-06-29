@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNotification } from '../NotificationContext';
 
 const AddSubCategoryForm = () => {
   const [categories, setCategories] = useState([]);
   const [catId, setCatId] = useState('');
   const [subCatName, setSubCatName] = useState('');
+  const {addNotification} = useNotification();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -25,6 +27,7 @@ const AddSubCategoryForm = () => {
       alert('Subcategory added successfully');
       setCatId('');
       setSubCatName('');
+      addNotification('Catergory Added  successfully');
     } catch (error) {
       console.error('Error adding subcategory:', error);
       alert('Failed to add subcategory');

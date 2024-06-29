@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNotification } from '../NotificationContext';
 
 const AddUserForm = ({ setFormData, handleSubmit, formData }) => {
     const [errors, setErrors] = useState({});
+    const {addNotification} = useNotification();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -57,6 +59,7 @@ const AddUserForm = ({ setFormData, handleSubmit, formData }) => {
     const handleFormSubmit = (event) => {
         event.preventDefault();
         if (validate()) {
+            addNotification('User added successfully');
             handleSubmit(event);
         }
     };

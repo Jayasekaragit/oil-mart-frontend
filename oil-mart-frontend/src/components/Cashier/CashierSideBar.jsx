@@ -1,13 +1,12 @@
 import React from 'react'
 import { FcDataSheet } from "react-icons/fc";
-import { DASHBOARD_SIDEBAR_BOTTOM_LINKS, DASHBOARD_SIDEBAR_LINKS } from '../../lib/consts/Navigation';
+import { DASHBOARD_SIDEBAR_BOTTOM_LINKS, DASHBOARD_SIDEBAR_LINKS } from '../../lib/consts/NavigationCashier';
 import { Link, useLocation } from 'react-router-dom';
 const linkClasses = 'flex items-center gap-2 py-2 px-3 hover:bg-neutral-700 hover:no-underline rounded-sm active:bg-neutral-600 text-base'
 import classNames from 'classnames'
 import { HiOutlineLogout } from 'react-icons/hi';
 
-
-export default function Sidebar() {
+export default function CashierSideBar() {
   return (
     <div className='flex flex-col text-white bg-neutral-900 w-60 p-3'>
       <div className='flex items-center gap-2 py-2 px-2'>

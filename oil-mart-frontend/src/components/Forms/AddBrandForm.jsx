@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNotification } from '../NotificationContext';
 
 const AddBrandForm = () => {
   const [brand, setBrand] = useState({ brand_name: '' });
+  const {addNotification} = useNotification();
 
   const handleChange = (e) => {
     setBrand({ ...brand, [e.target.name]: e.target.value });
@@ -13,9 +15,10 @@ const AddBrandForm = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/brands', brand);
       console.log(response.data);
+      addNotification('Brand Added successfully');
       // Reset form or handle success
     } catch (error) {
-      console.error('Error adding brand:', error);
+      alert('Error adding brand:', error);
     }
   };
 
